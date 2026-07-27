@@ -34,6 +34,14 @@ function setupEventListeners() {
     document.getElementById('payment-method').addEventListener('change', (e) => {
         document.getElementById('payment-change').style.display = e.target.value === 'dinheiro' ? 'inline-block' : 'none';
     });
+
+    // Add event listeners to remove red border on input
+    const requiredFields = ['client-name', 'client-street', 'client-neighborhood'];
+    requiredFields.forEach(fieldId => {
+        document.getElementById(fieldId).addEventListener('input', (e) => {
+            e.target.classList.remove('border-red-500');
+        });
+    });
 }
 
 function toggleOrderTypeFields() {
@@ -174,10 +182,45 @@ function updateTotal() {
     document.getElementById('total').textContent = total.toFixed(2);
 }
 
+function validateDeliveryFields() {
+    const orderType = document.getElementById('order-type').value;
+    if (orderType !== 'delivery') {
+        return true; // No validation needed for other types
+    }
+
+    const requiredFields = {
+        'client-name': 'Nome do cliente',
+        'client-street': 'Rua',
+        'client-neighborhood': 'Bairro'
+    };
+    let isValid = true;
+    let missingFields = [];
+
+    for (const fieldId in requiredFields) {
+        const field = document.getElementById(fieldId);
+        if (!field.value.trim()) {
+            isValid = false;
+            field.classList.add('border-red-500');
+            missingFields.push(requiredFields[fieldId]);
+        } else {
+            field.classList.remove('border-red-500');
+        }
+    }
+
+    if (!isValid) {
+        alert(`Os seguintes campos são obrigatórios para Delivery: ${missingFields.join(', ')}.`);
+    }
+
+    return isValid;
+}
+
 function printOnly() {
     if (currentOrder.items.length === 0) {
         alert("Nenhum item no pedido para imprimir.");
         return;
+    }
+    if (!validateDeliveryFields()) {
+        return; // Stop if validation fails
     }
     prepareReceipt();
     window.print();
@@ -277,11 +320,22 @@ function prepareReceipt() {
     const paymentMethod = document.getElementById('payment-method');
     const selectedPayment = paymentMethod.options[paymentMethod.selectedIndex].text;
     const paymentChange = document.getElementById('payment-change').value;
+    const paymentStatusSelect = document.getElementById('payment-status');
+    const paymentStatusValue = paymentStatusSelect.value;
+    const paymentStatusText = paymentStatusSelect.options[paymentStatusSelect.selectedIndex].text;
+
 
     document.getElementById('receipt-subtotal').textContent = subtotal.toFixed(2);
     document.getElementById('receipt-delivery-fee').textContent = currentOrder.deliveryFee.toFixed(2);
     document.getElementById('receipt-total').textContent = total.toFixed(2);
     document.getElementById('receipt-payment-method').textContent = selectedPayment;
+    document.getElementById('receipt-payment-status').textContent = paymentStatusText;
+
+    if (paymentStatusValue === 'pago') {
+        document.getElementById('receipt-amount-to-charge').textContent = '0.00';
+    } else {
+        document.getElementById('receipt-amount-to-charge').textContent = total.toFixed(2);
+    }
     
     if (selectedPayment === 'Dinheiro' && paymentChange) {
         document.getElementById('receipt-payment-change-line').style.display = 'block';
