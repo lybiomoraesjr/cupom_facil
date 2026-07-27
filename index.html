@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Caixa - Restaurante Doce Lar</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="container no-print">
+        <h1>Restaurante Doce Lar - Caixa</h1>
+
+        <fieldset>
+            <legend>Modalidade do Pedido</legend>
+            <div class="form-group">
+                <select id="order-type" onchange="toggleOrderTypeFields()">
+                    <option value="delivery">Delivery</option>
+                    <option value="balcao">Retirada / Balcão</option>
+                    <option value="local">Mesa / Local</option>
+                </select>
+            </div>
+        </fieldset>
+
+        <fieldset id="client-data-fieldset">
+            <legend>Dados do Cliente</legend>
+            <div class="form-group">
+                <label for="client-name">Nome:</label>
+                <input type="text" id="client-name" placeholder="Nome do cliente">
+            </div>
+            <div id="delivery-fields">
+                <div class="form-group">
+                    <label for="client-cep">CEP:</label>
+                    <input type="text" id="client-cep" placeholder="Apenas números" onkeyup="fetchAddress()">
+                    <button onclick="fetchAddress(true)">Buscar</button>
+                </div>
+                <div class="form-group">
+                    <label for="client-street">Rua:</label>
+                    <input type="text" id="client-street" placeholder="Rua, Av.">
+                </div>
+                <div class="form-group">
+                    <label for="client-number">Número:</label>
+                    <input type="text" id="client-number" placeholder="Nº">
+                </div>
+                <div class="form-group">
+                    <label for="client-neighborhood">Bairro:</label>
+                    <input type="text" id="client-neighborhood" placeholder="Bairro">
+                </div>
+                <div class="form-group">
+                    <label for="client-complement">Complemento:</label>
+                    <input type="text" id="client-complement" placeholder="Apto, Bloco, Casa">
+                </div>
+                <div class="form-group">
+                    <label for="client-reference">Ponto de Referência:</label>
+                    <input type="text" id="client-reference" placeholder="Próximo a...">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="client-phone">Telefone:</label>
+                <input type="tel" id="client-phone" placeholder="(XX) XXXXX-XXXX">
+            </div>
+            <div class="form-group">
+                <label for="payment-method">Forma de Pagamento:</label>
+                <select id="payment-method">
+                    <option value="dinheiro">Dinheiro</option>
+                    <option value="cartao">Cartão</option>
+                    <option value="pix">PIX</option>
+                </select>
+                <input type="text" id="payment-change" placeholder="Troco para quanto?" style="display: none;">
+            </div>
+        </fieldset>
+
+        <fieldset>
+            <legend>Adicionar Itens</legend>
+            <div class="form-group">
+                <label for="item-size">Marmitex:</label>
+                <select id="item-size">
+                    <option value="">Selecione o Tamanho</option>
+                    <option value="P">P - R$ 25,00</option>
+                    <option value="M">M - R$ 29,00</option>
+                    <option value="G">G - R$ 34,00</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="item-mixture">Mistura:</label>
+                <select id="item-mixture" disabled>
+                    <option>Selecione o tamanho primeiro</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="item-observation">Observação do Item:</label>
+                <input type="text" id="item-observation" placeholder="Ex: Sem cebola, com talheres">
+            </div>
+            <button onclick="addItem()">Adicionar Item</button>
+        </fieldset>
+        
+        <fieldset id="delivery-fee-fieldset" style="display: none;">
+            <legend>Taxa de Entrega</legend>
+            <div class="form-group">
+                <input type="number" id="delivery-fee" value="5.00" onchange="applyManualFee()" step="0.50">
+            </div>
+        </fieldset>
+
+        <fieldset>
+            <legend>Resumo do Pedido</legend>
+            <ul id="order-summary">
+                <!-- Itens do pedido serão adicionados aqui -->
+            </ul>
+            <div class="total">
+                <p>Subtotal: R$ <span id="subtotal">0.00</span></p>
+                <p>Taxa de Entrega: R$ <span id="delivery-fee-summary">0.00</span></p>
+                <h3>Total: R$ <span id="total">0.00</span></h3>
+            </div>
+        </fieldset>
+
+        <button class="print-button" onclick="printReceipt()">Finalizar e Imprimir Comanda</button>
+    </div>
+
+    <!-- Layout de Impressão -->
+    <div id="receipt" class="print-only">
+        <div class="receipt-header">
+            <h2>RESTAURANTE DOCE LAR CAMANDUCAIA</h2>
+            <p>CNPJ: 65.172.987/0001-77</p>
+            <p>Telefone: (35) 9 1020-8036</p>
+            <p>--------------------------------</p>
+            <p>Data: <span id="receipt-date"></span></p>
+            <p>--------------------------------</p>
+        </div>
+        <div class="receipt-client">
+            <h3>Dados do Cliente</h3>
+            <p>Nome: <span id="receipt-client-name"></span></p>
+            <p>Telefone: <span id="receipt-client-phone"></span></p>
+            <p id="receipt-client-address-line">Endereço: <span id="receipt-client-street"></span>, <span id="receipt-client-number"></span></p>
+            <p id="receipt-client-neighborhood-line">Bairro: <span id="receipt-client-neighborhood"></span></p>
+            <p id="receipt-client-complement-line">Comp: <span id="receipt-client-complement"></span></p>
+            <p id="receipt-client-reference-line">Ref: <span id="receipt-client-reference"></span></p>
+            <p>Modalidade: <span id="receipt-order-type"></span></p>
+            <p>--------------------------------</p>
+        </div>
+        <div class="receipt-items">
+            <h3>Itens do Pedido</h3>
+            <table id="receipt-items-table">
+                <!-- Itens para impressão -->
+            </table>
+            <p>--------------------------------</p>
+        </div>
+        <div class="receipt-total">
+            <p>Subtotal: R$ <span id="receipt-subtotal"></span></p>
+            <p>Taxa de Entrega: R$ <span id="receipt-delivery-fee"></span></p>
+            <h3>Total: R$ <span id="receipt-total"></span></h3>
+            <p>Pagamento: <span id="receipt-payment-method"></span></p>
+            <p id="receipt-payment-change-line">Troco para: R$ <span id="receipt-payment-change"></span></p>
+        </div>
+        <div class="receipt-footer">
+            <p>--------------------------------</p>
+            <p>--- ESTE NÃO É UM CUPOM FISCAL ---</p>
+            <img src="assets/logo.png" alt="Logo" class="logo">
+        </div>
+    </div>
+
+    <script src="js/data.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
