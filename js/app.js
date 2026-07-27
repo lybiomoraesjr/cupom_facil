@@ -194,7 +194,6 @@ function finalizeOrder() {
     toggleOrderTypeFields(); // to reset delivery fee
     updateTotal();
     document.getElementById('client-name').value = '';
-    document.getElementById('client-cep').value = '';
     document.getElementById('client-street').value = '';
     document.getElementById('client-number').value = '';
     document.getElementById('client-neighborhood').value = '';
@@ -290,29 +289,5 @@ function prepareReceipt() {
 
     } else {
         document.getElementById('receipt-payment-change-line').style.display = 'none';
-    }
-}
-
-function fetchAddress(force = false) {
-    const cepField = document.getElementById('client-cep');
-    const cep = cepField.value.replace(/\D/g, '');
-
-    if (force || cep.length === 8) {
-        fetch(`https://viacep.com.br/ws/${cep}/json/`)
-            .then(response => response.json())
-            .then(data => {
-                if (!data.erro) {
-                    document.getElementById('client-street').value = data.logradouro;
-                    document.getElementById('client-neighborhood').value = data.bairro;
-                    document.getElementById('client-complement').value = data.complemento;
-                    document.getElementById('client-number').focus();
-                } else {
-                    alert('CEP não encontrado.');
-                }
-            })
-            .catch(error => {
-                console.error('Erro ao buscar CEP:', error);
-                alert('Não foi possível buscar o CEP.');
-            });
     }
 }
