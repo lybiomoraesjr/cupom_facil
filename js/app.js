@@ -253,7 +253,7 @@ function prepareReceipt() {
 
             if (item.observation) {
                 const trObs = document.createElement('tr');
-                trObs.innerHTML = `<td colspan="3" class="item-obs">Obs: ${item.observation}</td>`;
+                trObs.innerHTML = `<td colspan="3" class="item-obs"><strong>Obs: ${item.observation}</strong></td>`;
                 itemsTable.appendChild(trObs);
             }
         } else { // custom item
