@@ -197,6 +197,7 @@
             </div>
         </fieldset>
 
+        <div id="error-message" class="hidden text-center text-white bg-red-500 p-2 rounded-md my-4"></div>
         <div class="flex gap-4 mt-6">
             <button onclick="printOnly()" class="w-full bg-gray-500 text-white px-4 py-3 rounded-md hover:bg-gray-600 text-lg font-bold">Imprimir Comanda</button>
             <button onclick="finalizeOrder()" class="w-full bg-green-600 text-white px-4 py-3 rounded-md hover:bg-green-700 text-lg font-bold">Finalizar Pedido</button>
@@ -209,13 +210,23 @@
             <h2>RESTAURANTE DOCE LAR CAMANDUCAIA</h2>
             <p>CNPJ: 65.172.987/0001-77</p>
             <p>Telefone: (35) 9 1020-8036</p>
+            <p>--------------------------------</p>
+            <p>Data: <span id="receipt-date"></span></p>
+            <p>--------------------------------</p>
+        </div>
+        <div class="receipt-items">
+            <h3>Itens do Pedido</h3>
+            <table id="receipt-items-table">
+                <!-- Itens para impressão -->
+            </table>
+            <p>--------------------------------</p>
         </div>
         <div class="receipt-total">
             <p>Subtotal: R$ <span id="receipt-subtotal"></span></p>
             <p>Taxa de Entrega: R$ <span id="receipt-delivery-fee"></span></p>
             <h3>Total: R$ <span id="receipt-total"></span></h3>
             <p>Pagamento: <span id="receipt-payment-method"></span></p>
-            <p id="receipt-payment-change-line">Troco para: R$ <span id="receipt-payment-change"></span></p>
+            <p id="receipt-payment-change-line" style="display: none;">Troco para: R$ <span id="receipt-payment-change"></span></p>
             <p>Status: <span id="receipt-payment-status"></span></p>
             <h3 class="font-bold">Valor a Cobrar: R$ <span id="receipt-amount-to-charge"></span></h3>
         </div>
@@ -224,10 +235,10 @@
             <h3>Dados do Cliente</h3>
             <p>Nome: <span id="receipt-client-name"></span></p>
             <p>Telefone: <span id="receipt-client-phone"></span></p>
-            <p id="receipt-client-address-line">Endereço: <span id="receipt-client-street"></span>, <span id="receipt-client-number"></span></p>
-            <p id="receipt-client-neighborhood-line">Bairro: <span id="receipt-client-neighborhood"></span></p>
-            <p id="receipt-client-complement-line">Comp: <span id="receipt-client-complement"></span></p>
-            <p id="receipt-client-reference-line">Ref: <span id="receipt-client-reference"></span></p>
+            <p id="receipt-client-address-line" style="display: none;">Endereço: <span id="receipt-client-street"></span>, <span id="receipt-client-number"></span></p>
+            <p id="receipt-client-neighborhood-line" style="display: none;">Bairro: <span id="receipt-client-neighborhood"></span></p>
+            <p id="receipt-client-complement-line" style="display: none;">Comp: <span id="receipt-client-complement"></span></p>
+            <p id="receipt-client-reference-line" style="display: none;">Ref: <span id="receipt-client-reference"></span></p>
             <p>Modalidade: <span id="receipt-order-type"></span></p>
         </div>
         <div class="receipt-footer">

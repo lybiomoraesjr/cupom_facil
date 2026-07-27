@@ -35,11 +35,14 @@ function setupEventListeners() {
         document.getElementById('payment-change').style.display = e.target.value === 'dinheiro' ? 'inline-block' : 'none';
     });
 
-    // Add event listeners to remove red border on input
+    // Add event listeners to remove red border and hide error message on input
     const requiredFields = ['client-name', 'client-street', 'client-neighborhood'];
     requiredFields.forEach(fieldId => {
         document.getElementById(fieldId).addEventListener('input', (e) => {
             e.target.classList.remove('border-red-500');
+            const errorDiv = document.getElementById('error-message');
+            errorDiv.classList.add('hidden');
+            errorDiv.textContent = '';
         });
     });
 }
@@ -184,6 +187,14 @@ function updateTotal() {
 
 function validateDeliveryFields() {
     const orderType = document.getElementById('order-type').value;
+    const errorDiv = document.getElementById('error-message');
+    
+    // Always clear previous validation state
+    errorDiv.classList.add('hidden');
+    errorDiv.textContent = '';
+    const requiredFieldIds = ['client-name', 'client-street', 'client-neighborhood'];
+    requiredFieldIds.forEach(id => document.getElementById(id).classList.remove('border-red-500'));
+
     if (orderType !== 'delivery') {
         return true; // No validation needed for other types
     }
@@ -202,13 +213,12 @@ function validateDeliveryFields() {
             isValid = false;
             field.classList.add('border-red-500');
             missingFields.push(requiredFields[fieldId]);
-        } else {
-            field.classList.remove('border-red-500');
         }
     }
 
     if (!isValid) {
-        alert(`Os seguintes campos são obrigatórios para Delivery: ${missingFields.join(', ')}.`);
+        errorDiv.textContent = `Campos obrigatórios para Delivery: ${missingFields.join(', ')}.`;
+        errorDiv.classList.remove('hidden');
     }
 
     return isValid;
