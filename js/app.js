@@ -285,12 +285,55 @@ function toggleCompanyFields() {
     if (!isChecked) {
         document.getElementById('client-company-name').value = '';
         document.getElementById('client-company-cnpj').value = '';
+        const loadingSpan = document.getElementById('cnpj-loading');
+        if (loadingSpan) loadingSpan.classList.add('hidden');
+    }
+}
+
+async function searchCNPJ(cnpj) {
+    if (cnpj.length !== 14) return;
+
+    const loadingSpan = document.getElementById('cnpj-loading');
+    const nameInput = document.getElementById('client-company-name');
+
+    if (loadingSpan) {
+        loadingSpan.classList.remove('hidden');
+        loadingSpan.textContent = '🔍 Buscando dados da empresa...';
+        loadingSpan.className = 'text-xs text-blue-600 mt-1 block';
+    }
+
+    try {
+        const response = await fetch(`https://brasilapi.com.br/api/cnpj/v1/${cnpj}`);
+        if (!response.ok) {
+            throw new Error('CNPJ não encontrado');
+        }
+        const data = await response.json();
+        const companyName = data.razao_social || data.nome_fantasia || '';
+
+        if (companyName) {
+            nameInput.value = companyName;
+            if (loadingSpan) {
+                loadingSpan.textContent = '✓ Empresa encontrada!';
+                loadingSpan.className = 'text-xs text-green-600 mt-1 block';
+                setTimeout(() => loadingSpan.classList.add('hidden'), 3000);
+            }
+        } else if (loadingSpan) {
+            loadingSpan.classList.add('hidden');
+        }
+    } catch (err) {
+        if (loadingSpan) {
+            loadingSpan.textContent = '⚠️ CNPJ não encontrado ou falha na consulta';
+            loadingSpan.className = 'text-xs text-amber-600 mt-1 block';
+            setTimeout(() => loadingSpan.classList.add('hidden'), 3000);
+        }
     }
 }
 
 function formatCNPJ(input) {
-    let value = input.value.replace(/\D/g, '');
+    let raw = input.value.replace(/\D/g, '');
+    let value = raw;
     if (value.length > 14) value = value.slice(0, 14);
+
     if (value.length > 12) {
         value = value.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{1,2})$/, '$1.$2.$3/$4-$5');
     } else if (value.length > 8) {
@@ -301,6 +344,10 @@ function formatCNPJ(input) {
         value = value.replace(/^(\d{2})(\d{1,3})$/, '$1.$2');
     }
     input.value = value;
+
+    if (raw.length === 14) {
+        searchCNPJ(raw);
+    }
 }
 
 function finalizeOrder() {
