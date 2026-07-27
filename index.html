@@ -6,24 +6,25 @@
     <title>Caixa - Restaurante Doce Lar</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Estilos de Impressão */
         .print-only {
             display: none;
         }
+        .no-print {
+            /* This class is used to hide elements from printing */
+        }
         @media print {
-            body * {
-                visibility: hidden;
+            body {
+                margin: 0;
+                padding: 0;
             }
-            .print-only, .print-only * {
-                visibility: visible;
+            .no-print {
+                display: none;
             }
             .print-only {
-                position: absolute;
-                left: 0;
-                top: 0;
+                display: block;
                 font-family: 'Courier New', Courier, monospace;
-                width: 80mm; /* Largura da bobina */
-                font-size: 10pt; /* Tamanho de fonte legível */
+                width: 80mm;
+                font-size: 10pt;
             }
             .receipt-header, .receipt-footer {
                 text-align: center;
@@ -56,16 +57,11 @@
             .receipt-total {
                 text-align: right;
             }
-            .logo {
-                max-width: 50%;
-                margin: 10px auto;
-                display: block;
-            }
         }
     </style>
 </head>
 <body class="bg-gray-100 flex justify-center p-4">
-    <div class="w-full max-w-4xl bg-white p-6 rounded-lg shadow-lg">
+    <div class="w-full max-w-4xl bg-white p-6 rounded-lg shadow-lg no-print">
         <h1 class="text-3xl font-bold text-center text-red-700 mb-6">Restaurante Doce Lar - Caixa</h1>
 
         <fieldset class="border border-gray-300 p-4 rounded-md mb-6">
@@ -241,7 +237,7 @@
         <div class="receipt-footer">
             <p>--------------------------------</p>
             <p>--- ESTE NÃO É UM CUPOM FISCAL ---</p>
-            <img src="assets/logo.png" alt="Logo" class="logo">
+            <!-- <img src="assets/logo.png" alt="Logo" class="logo"> -->
         </div>
     </div>
 
