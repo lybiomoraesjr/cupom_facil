@@ -95,31 +95,33 @@ function toggleOrderTypeFields() {
 
 function addItem() {
     const orderType = document.getElementById('order-type').value;
+    const qty = parseInt(document.getElementById('item-qty').value);
     const size = document.getElementById('item-size').value;
     const mixture = document.getElementById('item-mixture').value;
     const observation = document.getElementById('item-observation').value;
 
-    if (!size || !mixture) {
-        alert('Por favor, selecione o tipo/tamanho e a mistura.');
+    if (qty <= 0 || !size || !mixture) {
+        alert('Por favor, preencha a quantidade, tipo/tamanho e a mistura.');
         return;
     }
 
-    let price;
+    let unitPrice;
     let description;
     if (orderType === 'local') {
-        price = PRECOS_LOCAL[size];
+        unitPrice = PRECOS_LOCAL[size];
         description = size; // "Prato Feito" or "Comercial"
     } else {
-        price = PRECOS[size];
+        unitPrice = PRECOS[size];
         description = `Marmitex (${size})`;
     }
 
     const item = {
         id: Date.now(),
         type: 'meal', // Generic type for marmitex or prato feito
+        qty,
         description,
         mixture,
-        price,
+        price: qty * unitPrice,
         observation,
     };
 
@@ -165,7 +167,7 @@ function renderOrderSummary() {
         
         let text;
         if (item.type === 'meal') {
-            text = `${item.description} - ${item.mixture}`;
+            text = `${item.qty}x ${item.description} - ${item.mixture}`;
             if (item.observation) {
                 text += ` <span class="text-sm text-gray-500">(${item.observation})</span>`;
             }
@@ -188,6 +190,7 @@ function removeItem(itemId) {
 }
 
 function clearItemInputs() {
+    document.getElementById('item-qty').value = '1';
     document.getElementById('item-size').value = '';
     document.getElementById('item-mixture').value = '';
     document.getElementById('item-observation').value = '';
@@ -326,7 +329,8 @@ function prepareReceipt() {
             let accompaniments = REGRAS_EXCECAO_ACOMPANHAMENTO[item.mixture] || ACOMPANHAMENTOS_BASE;
 
             tr.innerHTML = `
-                <td colspan="2"><strong>${item.description} - ${item.mixture}</strong></td>
+                <td>${item.qty}x</td>
+                <td><strong>${item.description} - ${item.mixture}</strong></td>
                 <td>R$ ${item.price.toFixed(2)}</td>
             `;
             itemsTable.appendChild(tr);
