@@ -1,6 +1,6 @@
-# 🍽️ Pedido Fácil — Restaurante Doce Lar
+# 🍽️ Cupom Fácil — Restaurante Doce Lar
 
-Sistema leve, moderno e 100% *Client-Side* (rodando inteiramente no navegador, sem necessidade de servidor ou banco de dados) desenvolvido especialmente para o **Restaurante Doce Lar** (Camanducaia).
+**Cupom Fácil** é um sistema leve, moderno e 100% *Client-Side* (rodando inteiramente no navegador, sem necessidade de servidor ou banco de dados) desenvolvido especialmente para o **Restaurante Doce Lar** (Camanducaia).
 
 O projeto destina-se ao lançamento ágil de pedidos no caixa e emissão automática de comandas formatadas para impressoras térmicas de **80mm (POS-80)**.
 
@@ -21,6 +21,10 @@ O projeto destina-se ao lançamento ágil de pedidos no caixa e emissão automá
 
 - **Produtos Personalizados**:
   - Adição de bebidas ou acompanhamentos avulsos com cálculo automático do **Valor Total** (`Quantidade × Preço Unitário`) em tempo real.
+
+- **Dados para Reembolso Corporativo (CNPJ)**:
+  - Opção para inclusão de **Razão Social / Nome da Empresa** e **CNPJ da Empresa** (com máscara automática `00.000.000/0000-00`).
+  - Os dados da empresa são exibidos no cupom de impressão apenas quando a opção estiver ativada e os campos preenchidos.
 
 - **Pagamento e Totais**:
   - Seleção de forma de pagamento (Dinheiro com troco, Cartão, PIX).
@@ -46,7 +50,7 @@ O projeto destina-se ao lançamento ágil de pedidos no caixa e emissão automá
 ## 📂 Estrutura do Projeto
 
 ```text
-pedido_facil/
+cupom_facil/
 ├── index.html       # Interface do caixa e layout do cupom térmico
 ├── js/
 │   ├── data.js      # Cardápio, tabela de preços e regras de acompanhamento
