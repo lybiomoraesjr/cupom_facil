@@ -174,34 +174,32 @@ function updateTotal() {
     document.getElementById('total').textContent = total.toFixed(2);
 }
 
-function printReceipt() {
+function printOnly() {
     if (currentOrder.items.length === 0) {
         alert("Nenhum item no pedido para imprimir.");
         return;
     }
-    
     prepareReceipt();
-    
     window.print();
-    
-    // Reset for next order
-    setTimeout(() => {
-        currentOrder = { items: [], deliveryFee: 0 };
-        renderOrderSummary();
-        toggleOrderTypeFields(); // to reset delivery fee
-        updateTotal();
-        document.getElementById('client-name').value = '';
-        document.getElementById('client-cep').value = '';
-        document.getElementById('client-street').value = '';
-        document.getElementById('client-number').value = '';
-        document.getElementById('client-neighborhood').value = '';
-        document.getElementById('client-complement').value = '';
-        document.getElementById('client-reference').value = '';
-        document.getElementById('client-phone').value = '';
-        document.getElementById('payment-change').value = '';
-        clearCustomItemInputs();
-        clearItemInputs();
-    }, 1000);
+}
+
+function finalizeOrder() {
+    currentOrder = { items: [], deliveryFee: 0 };
+    renderOrderSummary();
+    toggleOrderTypeFields(); // to reset delivery fee
+    updateTotal();
+    document.getElementById('client-name').value = '';
+    document.getElementById('client-cep').value = '';
+    document.getElementById('client-street').value = '';
+    document.getElementById('client-number').value = '';
+    document.getElementById('client-neighborhood').value = '';
+    document.getElementById('client-complement').value = '';
+    document.getElementById('client-reference').value = '';
+    document.getElementById('client-phone').value = '';
+    document.getElementById('payment-change').value = '';
+    clearCustomItemInputs();
+    clearItemInputs();
+    alert("Pedido finalizado. Pronto para o próximo!");
 }
 
 function prepareReceipt() {

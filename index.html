@@ -197,7 +197,10 @@
             </div>
         </fieldset>
 
-        <button onclick="printReceipt()" class="w-full bg-green-600 text-white px-4 py-3 rounded-md hover:bg-green-700 text-lg font-bold">Finalizar e Imprimir Comanda</button>
+        <div class="flex gap-4 mt-6">
+            <button onclick="printOnly()" class="w-full bg-gray-500 text-white px-4 py-3 rounded-md hover:bg-gray-600 text-lg font-bold">Imprimir Comanda</button>
+            <button onclick="finalizeOrder()" class="w-full bg-green-600 text-white px-4 py-3 rounded-md hover:bg-green-700 text-lg font-bold">Finalizar Pedido</button>
+        </div>
     </div>
 
     <!-- Layout de Impressão -->
