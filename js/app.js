@@ -73,6 +73,7 @@ function addItem() {
     const price = PRECOS[size];
     const item = {
         id: Date.now(),
+        type: 'marmitex',
         size,
         mixture,
         price,
@@ -85,23 +86,54 @@ function addItem() {
     clearItemInputs();
 }
 
+function addCustomItem() {
+    const qty = parseInt(document.getElementById('custom-item-qty').value);
+    const name = document.getElementById('custom-item-name').value;
+    const price = parseFloat(document.getElementById('custom-item-price').value);
+
+    if (qty <= 0 || !name || isNaN(price) || price <= 0) {
+        alert('Por favor, preencha a quantidade, nome e preço do produto.');
+        return;
+    }
+
+    const item = {
+        id: Date.now(),
+        type: 'custom',
+        qty,
+        name,
+        price: qty * price,
+        unitPrice: price
+    };
+
+    currentOrder.items.push(item);
+    renderOrderSummary();
+    updateTotal();
+    clearCustomItemInputs();
+}
+
+
 function renderOrderSummary() {
     const summaryList = document.getElementById('order-summary');
     summaryList.innerHTML = '';
 
     currentOrder.items.forEach(item => {
         const li = document.createElement('li');
-        li.innerHTML = `
-            <span>${item.size} - ${item.mixture} (R$ ${item.price.toFixed(2)})</span>
-            <button onclick="removeItem(${item.id})">Remover</button>
-        `;
-        if (item.observation) {
-            const obs = document.createElement('div');
-            obs.style.fontSize = '0.8em';
-            obs.style.color = '#555';
-            obs.textContent = `Obs: ${item.observation}`;
-            li.appendChild(obs);
+        li.className = 'p-2 border-b flex justify-between items-center';
+        
+        let text;
+        if (item.type === 'marmitex') {
+            text = `${item.size} - ${item.mixture}`;
+            if (item.observation) {
+                text += ` <span class="text-sm text-gray-500">(${item.observation})</span>`;
+            }
+        } else {
+            text = `${item.qty}x ${item.name}`;
         }
+
+        li.innerHTML = `
+            <span>${text} (R$ ${item.price.toFixed(2)})</span>
+            <button onclick="removeItem(${item.id})" class="bg-red-500 text-white px-2 py-1 rounded-md text-sm">Remover</button>
+        `;
         summaryList.appendChild(li);
     });
 }
@@ -117,6 +149,12 @@ function clearItemInputs() {
     document.getElementById('item-mixture').value = '';
     document.getElementById('item-observation').value = '';
     document.getElementById('item-mixture').disabled = true;
+}
+
+function clearCustomItemInputs() {
+    document.getElementById('custom-item-qty').value = '1';
+    document.getElementById('custom-item-name').value = '';
+    document.getElementById('custom-item-price').value = '';
 }
 
 function applyManualFee() {
@@ -161,6 +199,8 @@ function printReceipt() {
         document.getElementById('client-reference').value = '';
         document.getElementById('client-phone').value = '';
         document.getElementById('payment-change').value = '';
+        clearCustomItemInputs();
+        clearItemInputs();
     }, 1000);
 }
 
@@ -199,24 +239,33 @@ function prepareReceipt() {
     const itemsTable = document.getElementById('receipt-items-table');
     itemsTable.innerHTML = '';
     currentOrder.items.forEach(item => {
-        const tr = document.createElement('tr');
-        
-        let accompaniments = REGRAS_EXCECAO_ACOMPANHAMENTO[item.mixture] || ACOMPANHAMENTOS_BASE;
+        if (item.type === 'marmitex') {
+            const tr = document.createElement('tr');
+            let accompaniments = REGRAS_EXCECAO_ACOMPANHAMENTO[item.mixture] || ACOMPANHAMENTOS_BASE;
 
-        tr.innerHTML = `
-            <td colspan="2"><strong>${item.mixture} (${item.size})</strong></td>
-            <td>R$ ${item.price.toFixed(2)}</td>
-        `;
-        itemsTable.appendChild(tr);
+            tr.innerHTML = `
+                <td colspan="2"><strong>${item.mixture} (${item.size})</strong></td>
+                <td>R$ ${item.price.toFixed(2)}</td>
+            `;
+            itemsTable.appendChild(tr);
 
-        const trAccompaniments = document.createElement('tr');
-        trAccompaniments.innerHTML = `<td colspan="3" class="item-accompaniments">${accompaniments}</td>`;
-        itemsTable.appendChild(trAccompaniments);
+            const trAccompaniments = document.createElement('tr');
+            trAccompaniments.innerHTML = `<td colspan="3" class="item-accompaniments">${accompaniments}</td>`;
+            itemsTable.appendChild(trAccompaniments);
 
-        if (item.observation) {
-            const trObs = document.createElement('tr');
-            trObs.innerHTML = `<td colspan="3" class="item-obs">Obs: ${item.observation}</td>`;
-            itemsTable.appendChild(trObs);
+            if (item.observation) {
+                const trObs = document.createElement('tr');
+                trObs.innerHTML = `<td colspan="3" class="item-obs">Obs: ${item.observation}</td>`;
+                itemsTable.appendChild(trObs);
+            }
+        } else { // custom item
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${item.qty}x</td>
+                <td><strong>${item.name}</strong></td>
+                <td>R$ ${item.price.toFixed(2)}</td>
+            `;
+            itemsTable.appendChild(tr);
         }
     });
 
