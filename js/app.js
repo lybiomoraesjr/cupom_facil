@@ -70,10 +70,12 @@ function updateItemOptions(orderType) {
 function toggleOrderTypeFields() {
     const orderType = document.getElementById('order-type').value;
     const clientData = document.getElementById('client-data-fieldset');
+    const clientInfoFields = document.getElementById('client-info-fields');
+    const localToggleContainer = document.getElementById('local-client-toggle-container');
     const deliveryFields = document.getElementById('delivery-fields');
     const deliveryFeeFieldset = document.getElementById('delivery-fee-fieldset');
 
-    // Reset all fields visibility
+    // Reset default visibilities
     clientData.style.display = 'block';
     deliveryFields.style.display = 'none';
     deliveryFeeFieldset.style.display = 'none';
@@ -82,15 +84,36 @@ function toggleOrderTypeFields() {
     updateItemOptions(orderType);
 
     if (orderType === 'delivery') {
+        localToggleContainer.style.display = 'none';
+        clientInfoFields.style.display = 'block';
         deliveryFields.style.display = 'block';
         deliveryFeeFieldset.style.display = 'block';
         currentOrder.deliveryFee = 5.00;
         document.getElementById('delivery-fee').value = '5.00';
+    } else if (orderType === 'balcao') {
+        localToggleContainer.style.display = 'none';
+        clientInfoFields.style.display = 'block';
     } else if (orderType === 'local') {
-        clientData.style.display = 'none';
+        localToggleContainer.style.display = 'block';
+        toggleLocalClientFields();
     }
     
     updateTotal();
+}
+
+function toggleLocalClientFields() {
+    const orderType = document.getElementById('order-type').value;
+    if (orderType === 'local') {
+        const isChecked = document.getElementById('toggle-local-client').checked;
+        const clientInfoFields = document.getElementById('client-info-fields');
+        clientInfoFields.style.display = isChecked ? 'block' : 'none';
+        if (!isChecked) {
+            document.getElementById('client-name').value = '';
+            document.getElementById('client-phone').value = '';
+            document.getElementById('toggle-company-info').checked = false;
+            toggleCompanyFields();
+        }
+    }
 }
 
 function addItem() {
@@ -368,6 +391,7 @@ function finalizeOrder() {
     document.getElementById('client-reference').value = '';
     document.getElementById('client-phone').value = '';
     document.getElementById('payment-change').value = '';
+    document.getElementById('toggle-local-client').checked = false;
     document.getElementById('toggle-company-info').checked = false;
     toggleCompanyFields();
     clearCustomItemInputs();
