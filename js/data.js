@@ -5,8 +5,8 @@ const PRECOS = {
 };
 
 const PRECOS_LOCAL = {
-    'Prato Feito': 25.00,
-    'Comercial': 29.00,
+    'Prato Feito': 30.00,
+    'Comercial': 25.00,
 };
 
 const ACOMPANHAMENTOS_BASE = "Arroz, feijão, macarrão alho e óleo, farofa da casa, ovo frito e salada fresca.";
