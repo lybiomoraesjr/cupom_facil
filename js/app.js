@@ -137,7 +137,7 @@ function addCustomItem() {
     const price = parseFloat(document.getElementById('custom-item-price').value);
 
     if (qty <= 0 || !name || isNaN(price) || price <= 0) {
-        alert('Por favor, preencha a quantidade, nome e preço do produto.');
+        alert('Por favor, preencha a quantidade, nome e preço unitário do produto.');
         return;
     }
 
@@ -197,10 +197,18 @@ function clearItemInputs() {
     document.getElementById('item-mixture').disabled = true;
 }
 
+function updateCustomItemTotal() {
+    const qty = parseInt(document.getElementById('custom-item-qty').value) || 0;
+    const price = parseFloat(document.getElementById('custom-item-price').value) || 0;
+    const total = qty > 0 && price > 0 ? (qty * price) : 0;
+    document.getElementById('custom-item-total').value = total.toFixed(2);
+}
+
 function clearCustomItemInputs() {
     document.getElementById('custom-item-qty').value = '1';
     document.getElementById('custom-item-name').value = '';
     document.getElementById('custom-item-price').value = '';
+    document.getElementById('custom-item-total').value = '0.00';
 }
 
 function applyManualFee() {
