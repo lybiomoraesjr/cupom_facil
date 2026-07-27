@@ -47,45 +47,77 @@ function setupEventListeners() {
     });
 }
 
+function updateItemOptions(orderType) {
+    const sizeSelect = document.getElementById('item-size');
+    const sizeLabel = document.querySelector('label[for="item-size"]');
+    sizeSelect.innerHTML = ''; // Clear existing options
+
+    if (orderType === 'local') {
+        sizeLabel.textContent = 'Tipo de Prato:';
+        sizeSelect.add(new Option('Selecione o Tipo', ''));
+        for (const [key, value] of Object.entries(PRECOS_LOCAL)) {
+            sizeSelect.add(new Option(`${key} - R$ ${value.toFixed(2)}`, key));
+        }
+    } else {
+        sizeLabel.textContent = 'Marmitex:';
+        sizeSelect.add(new Option('Selecione o Tamanho', ''));
+        for (const [key, value] of Object.entries(PRECOS)) {
+            sizeSelect.add(new Option(`${key} - R$ ${value.toFixed(2)}`, key));
+        }
+    }
+}
+
 function toggleOrderTypeFields() {
     const orderType = document.getElementById('order-type').value;
     const clientData = document.getElementById('client-data-fieldset');
     const deliveryFields = document.getElementById('delivery-fields');
     const deliveryFeeFieldset = document.getElementById('delivery-fee-fieldset');
 
+    // Reset all fields visibility
     clientData.style.display = 'block';
     deliveryFields.style.display = 'none';
     deliveryFeeFieldset.style.display = 'none';
     currentOrder.deliveryFee = 0;
 
+    updateItemOptions(orderType);
 
     if (orderType === 'delivery') {
         deliveryFields.style.display = 'block';
         deliveryFeeFieldset.style.display = 'block';
         currentOrder.deliveryFee = 5.00;
         document.getElementById('delivery-fee').value = '5.00';
-
     } else if (orderType === 'local') {
         clientData.style.display = 'none';
     }
+    
     updateTotal();
 }
 
 function addItem() {
+    const orderType = document.getElementById('order-type').value;
     const size = document.getElementById('item-size').value;
     const mixture = document.getElementById('item-mixture').value;
     const observation = document.getElementById('item-observation').value;
 
     if (!size || !mixture) {
-        alert('Por favor, selecione o tamanho e a mistura da marmitex.');
+        alert('Por favor, selecione o tipo/tamanho e a mistura.');
         return;
     }
 
-    const price = PRECOS[size];
+    let price;
+    let description;
+    if (orderType === 'local') {
+        price = PRECOS_LOCAL[size];
+        description = size; // "Prato Feito" or "Comercial"
+    } else {
+        price = PRECOS[size];
+        description = `Marmitex (${size})`;
+    }
+
     const item = {
         id: Date.now(),
-        type: 'marmitex',
-        size,
+        type: 'meal', // Generic type for marmitex or prato feito
+        description,
         mixture,
         price,
         observation,
@@ -132,12 +164,12 @@ function renderOrderSummary() {
         li.className = 'p-2 border-b flex justify-between items-center';
         
         let text;
-        if (item.type === 'marmitex') {
-            text = `${item.size} - ${item.mixture}`;
+        if (item.type === 'meal') {
+            text = `${item.description} - ${item.mixture}`;
             if (item.observation) {
                 text += ` <span class="text-sm text-gray-500">(${item.observation})</span>`;
             }
-        } else {
+        } else { // custom
             text = `${item.qty}x ${item.name}`;
         }
 
@@ -189,14 +221,13 @@ function validateDeliveryFields() {
     const orderType = document.getElementById('order-type').value;
     const errorDiv = document.getElementById('error-message');
     
-    // Always clear previous validation state
     errorDiv.classList.add('hidden');
     errorDiv.textContent = '';
     const requiredFieldIds = ['client-name', 'client-street', 'client-neighborhood'];
     requiredFieldIds.forEach(id => document.getElementById(id).classList.remove('border-red-500'));
 
     if (orderType !== 'delivery') {
-        return true; // No validation needed for other types
+        return true;
     }
 
     const requiredFields = {
@@ -230,7 +261,7 @@ function printOnly() {
         return;
     }
     if (!validateDeliveryFields()) {
-        return; // Stop if validation fails
+        return;
     }
     prepareReceipt();
     window.print();
@@ -244,7 +275,7 @@ function finalizeOrder() {
 
     currentOrder = { items: [], deliveryFee: 0 };
     renderOrderSummary();
-    toggleOrderTypeFields(); // to reset delivery fee
+    toggleOrderTypeFields();
     updateTotal();
     document.getElementById('client-name').value = '';
     document.getElementById('client-street').value = '';
@@ -263,10 +294,8 @@ function prepareReceipt() {
     const orderType = document.getElementById('order-type');
     const selectedOrderType = orderType.options[orderType.selectedIndex].text;
     
-    // Header
     document.getElementById('receipt-date').textContent = new Date().toLocaleString('pt-BR');
 
-    // Client Data
     const clientName = document.getElementById('client-name').value;
     const clientPhone = document.getElementById('client-phone').value;
     const clientStreet = document.getElementById('client-street').value;
@@ -289,17 +318,15 @@ function prepareReceipt() {
     document.getElementById('receipt-client-complement-line').style.display = clientComplement ? 'block' : 'none';
     document.getElementById('receipt-client-reference-line').style.display = clientReference ? 'block' : 'none';
 
-
-    // Items
     const itemsTable = document.getElementById('receipt-items-table');
     itemsTable.innerHTML = '';
     currentOrder.items.forEach(item => {
-        if (item.type === 'marmitex') {
+        if (item.type === 'meal') {
             const tr = document.createElement('tr');
             let accompaniments = REGRAS_EXCECAO_ACOMPANHAMENTO[item.mixture] || ACOMPANHAMENTOS_BASE;
 
             tr.innerHTML = `
-                <td colspan="2"><strong>${item.mixture} (${item.size})</strong></td>
+                <td colspan="2"><strong>${item.description} - ${item.mixture}</strong></td>
                 <td>R$ ${item.price.toFixed(2)}</td>
             `;
             itemsTable.appendChild(tr);
@@ -324,7 +351,6 @@ function prepareReceipt() {
         }
     });
 
-    // Total
     const subtotal = currentOrder.items.reduce((sum, item) => sum + item.price, 0);
     const total = subtotal + currentOrder.deliveryFee;
     const paymentMethod = document.getElementById('payment-method');
@@ -333,7 +359,6 @@ function prepareReceipt() {
     const paymentStatusSelect = document.getElementById('payment-status');
     const paymentStatusValue = paymentStatusSelect.value;
     const paymentStatusText = paymentStatusSelect.options[paymentStatusSelect.selectedIndex].text;
-
 
     document.getElementById('receipt-subtotal').textContent = subtotal.toFixed(2);
     document.getElementById('receipt-delivery-fee').textContent = currentOrder.deliveryFee.toFixed(2);
@@ -350,7 +375,6 @@ function prepareReceipt() {
     if (selectedPayment === 'Dinheiro' && paymentChange) {
         document.getElementById('receipt-payment-change-line').style.display = 'block';
         document.getElementById('receipt-payment-change').textContent = parseFloat(paymentChange).toFixed(2);
-
     } else {
         document.getElementById('receipt-payment-change-line').style.display = 'none';
     }
