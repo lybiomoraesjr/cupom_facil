@@ -184,6 +184,11 @@ function printOnly() {
 }
 
 function finalizeOrder() {
+    const confirmation = window.confirm("Tem certeza que deseja cancelar o pedido? Isso vai apagar todo o conteúdo.");
+    if (!confirmation) {
+        return;
+    }
+
     currentOrder = { items: [], deliveryFee: 0 };
     renderOrderSummary();
     toggleOrderTypeFields(); // to reset delivery fee
@@ -199,7 +204,7 @@ function finalizeOrder() {
     document.getElementById('payment-change').value = '';
     clearCustomItemInputs();
     clearItemInputs();
-    alert("Pedido finalizado. Pronto para o próximo!");
+    alert("Pedido cancelado. Pronto para o próximo!");
 }
 
 function prepareReceipt() {
