@@ -72,6 +72,7 @@ function toggleOrderTypeFields() {
     const clientData = document.getElementById('client-data-fieldset');
     const clientInfoFields = document.getElementById('client-info-fields');
     const localToggleContainer = document.getElementById('local-client-toggle-container');
+    const tableContainer = document.getElementById('table-number-container');
     const deliveryFields = document.getElementById('delivery-fields');
     const deliveryFeeFieldset = document.getElementById('delivery-fee-fieldset');
 
@@ -84,6 +85,8 @@ function toggleOrderTypeFields() {
     updateItemOptions(orderType);
 
     if (orderType === 'delivery') {
+        tableContainer.style.display = 'none';
+        document.getElementById('table-number').value = '';
         localToggleContainer.style.display = 'none';
         clientInfoFields.style.display = 'block';
         deliveryFields.style.display = 'block';
@@ -91,9 +94,12 @@ function toggleOrderTypeFields() {
         currentOrder.deliveryFee = 5.00;
         document.getElementById('delivery-fee').value = '5.00';
     } else if (orderType === 'balcao') {
+        tableContainer.style.display = 'none';
+        document.getElementById('table-number').value = '';
         localToggleContainer.style.display = 'none';
         clientInfoFields.style.display = 'block';
     } else if (orderType === 'local') {
+        tableContainer.style.display = 'block';
         localToggleContainer.style.display = 'block';
         toggleLocalClientFields();
     }
@@ -383,6 +389,7 @@ function finalizeOrder() {
     renderOrderSummary();
     toggleOrderTypeFields();
     updateTotal();
+    document.getElementById('table-number').value = '';
     document.getElementById('client-name').value = '';
     document.getElementById('client-street').value = '';
     document.getElementById('client-number').value = '';
@@ -412,6 +419,7 @@ function prepareReceipt() {
     const clientNeighborhood = document.getElementById('client-neighborhood').value;
     const clientComplement = document.getElementById('client-complement').value;
     const clientReference = document.getElementById('client-reference').value;
+    const tableNumber = document.getElementById('table-number').value.trim();
 
     document.getElementById('receipt-client-name').textContent = clientName || 'N/A';
     document.getElementById('receipt-client-phone').textContent = clientPhone || 'N/A';
@@ -426,6 +434,13 @@ function prepareReceipt() {
     document.getElementById('receipt-client-neighborhood-line').style.display = clientNeighborhood ? 'block' : 'none';
     document.getElementById('receipt-client-complement-line').style.display = clientComplement ? 'block' : 'none';
     document.getElementById('receipt-client-reference-line').style.display = clientReference ? 'block' : 'none';
+
+    if (orderType.value === 'local' && tableNumber) {
+        document.getElementById('receipt-table-number-line').style.display = 'block';
+        document.getElementById('receipt-table-number').textContent = tableNumber;
+    } else {
+        document.getElementById('receipt-table-number-line').style.display = 'none';
+    }
 
     const isCompanyChecked = document.getElementById('toggle-company-info').checked;
     const companyName = document.getElementById('client-company-name').value.trim();
