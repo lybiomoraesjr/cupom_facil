@@ -278,6 +278,31 @@ function printOnly() {
     window.print();
 }
 
+function toggleCompanyFields() {
+    const isChecked = document.getElementById('toggle-company-info').checked;
+    const companyFields = document.getElementById('company-fields');
+    companyFields.style.display = isChecked ? 'grid' : 'none';
+    if (!isChecked) {
+        document.getElementById('client-company-name').value = '';
+        document.getElementById('client-company-cnpj').value = '';
+    }
+}
+
+function formatCNPJ(input) {
+    let value = input.value.replace(/\D/g, '');
+    if (value.length > 14) value = value.slice(0, 14);
+    if (value.length > 12) {
+        value = value.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{1,2})$/, '$1.$2.$3/$4-$5');
+    } else if (value.length > 8) {
+        value = value.replace(/^(\d{2})(\d{3})(\d{3})(\d{1,4})$/, '$1.$2.$3/$4');
+    } else if (value.length > 5) {
+        value = value.replace(/^(\d{2})(\d{3})(\d{1,3})$/, '$1.$2.$3');
+    } else if (value.length > 2) {
+        value = value.replace(/^(\d{2})(\d{1,3})$/, '$1.$2');
+    }
+    input.value = value;
+}
+
 function finalizeOrder() {
     const confirmation = window.confirm("Tem certeza que deseja cancelar o pedido? Isso vai apagar todo o conteúdo.");
     if (!confirmation) {
@@ -296,6 +321,8 @@ function finalizeOrder() {
     document.getElementById('client-reference').value = '';
     document.getElementById('client-phone').value = '';
     document.getElementById('payment-change').value = '';
+    document.getElementById('toggle-company-info').checked = false;
+    toggleCompanyFields();
     clearCustomItemInputs();
     clearItemInputs();
     alert("Pedido cancelado. Pronto para o próximo!");
@@ -328,6 +355,24 @@ function prepareReceipt() {
     document.getElementById('receipt-client-neighborhood-line').style.display = clientNeighborhood ? 'block' : 'none';
     document.getElementById('receipt-client-complement-line').style.display = clientComplement ? 'block' : 'none';
     document.getElementById('receipt-client-reference-line').style.display = clientReference ? 'block' : 'none';
+
+    const isCompanyChecked = document.getElementById('toggle-company-info').checked;
+    const companyName = document.getElementById('client-company-name').value.trim();
+    const companyCNPJ = document.getElementById('client-company-cnpj').value.trim();
+
+    if (isCompanyChecked && companyName) {
+        document.getElementById('receipt-client-company-line').style.display = 'block';
+        document.getElementById('receipt-client-company-name').textContent = companyName;
+    } else {
+        document.getElementById('receipt-client-company-line').style.display = 'none';
+    }
+
+    if (isCompanyChecked && companyCNPJ) {
+        document.getElementById('receipt-client-cnpj-line').style.display = 'block';
+        document.getElementById('receipt-client-company-cnpj').textContent = companyCNPJ;
+    } else {
+        document.getElementById('receipt-client-cnpj-line').style.display = 'none';
+    }
 
     const itemsTable = document.getElementById('receipt-items-table');
     itemsTable.innerHTML = '';
