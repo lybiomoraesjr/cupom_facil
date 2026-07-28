@@ -9,7 +9,7 @@ const PRECOS_LOCAL = {
     'Comercial': 25.00,
 };
 
-const ACOMPANHAMENTOS_BASE = "Arroz, feijão, macarrão alho e óleo, farofa da casa, ovo frito e salada fresca.";
+const ACOMPANHAMENTOS_BASE = "Arroz, feijão, macarrão alho e óleo, farofa da casa, fritas, ovo frito e salada fresca.";
 
 const MISTURAS_OPCOES = {
     CARNE_DE_PANELA: "Carne de panela c/ batata",
