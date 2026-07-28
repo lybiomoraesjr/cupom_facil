@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Caixa - Restaurante Doce Lar</title>
+    <title>Cupom Fácil - Restaurante Doce Lar</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .print-only {
@@ -250,8 +250,8 @@
                 <!-- Itens do pedido serão adicionados aqui -->
             </ul>
             <div class="text-right">
-                <p class="text-lg">Subtotal: R$ <span id="subtotal">0.00</span></p>
-                <p class="text-lg">Taxa de Entrega: R$ <span id="delivery-fee-summary">0.00</span></p>
+                <p id="subtotal-summary-line" style="display: none;" class="text-lg">Subtotal: R$ <span id="subtotal">0.00</span></p>
+                <p id="delivery-fee-summary-line" style="display: none;" class="text-lg">Taxa de Entrega: R$ <span id="delivery-fee-summary">0.00</span></p>
                 <h3 class="text-xl font-bold">Total: R$ <span id="total">0.00</span></h3>
             </div>
         </fieldset>
@@ -281,8 +281,8 @@
             <p>--------------------------------</p>
         </div>
         <div class="receipt-total">
-            <p>Subtotal: R$ <span id="receipt-subtotal"></span></p>
-            <p>Taxa de Entrega: R$ <span id="receipt-delivery-fee"></span></p>
+            <p id="receipt-subtotal-line">Subtotal: R$ <span id="receipt-subtotal"></span></p>
+            <p id="receipt-delivery-fee-line" style="display: none;">Taxa de Entrega: R$ <span id="receipt-delivery-fee"></span></p>
             <h3>Total: R$ <span id="receipt-total"></span></h3>
             <p>Pagamento: <span id="receipt-payment-method"></span></p>
             <p id="receipt-payment-change-line" style="display: none;">Troco para: R$ <span id="receipt-payment-change"></span></p>

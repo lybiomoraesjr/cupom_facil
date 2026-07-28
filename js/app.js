@@ -251,10 +251,22 @@ function applyManualFee() {
 function updateTotal() {
     const subtotal = currentOrder.items.reduce((sum, item) => sum + item.price, 0);
     const total = subtotal + currentOrder.deliveryFee;
+    const orderType = document.getElementById('order-type').value;
 
     document.getElementById('subtotal').textContent = subtotal.toFixed(2);
     document.getElementById('delivery-fee-summary').textContent = currentOrder.deliveryFee.toFixed(2);
     document.getElementById('total').textContent = total.toFixed(2);
+
+    const subtotalLine = document.getElementById('subtotal-summary-line');
+    const deliveryFeeLine = document.getElementById('delivery-fee-summary-line');
+
+    if (orderType === 'delivery' && currentOrder.deliveryFee > 0) {
+        subtotalLine.style.display = 'block';
+        deliveryFeeLine.style.display = 'block';
+    } else {
+        subtotalLine.style.display = 'none';
+        deliveryFeeLine.style.display = 'none';
+    }
 }
 
 function validateDeliveryFields() {
@@ -503,11 +515,21 @@ function prepareReceipt() {
     const paymentStatusValue = paymentStatusSelect.value;
     const paymentStatusText = paymentStatusSelect.options[paymentStatusSelect.selectedIndex].text;
 
+    const selectedOrderTypeValue = document.getElementById('order-type').value;
+
     document.getElementById('receipt-subtotal').textContent = subtotal.toFixed(2);
-    document.getElementById('receipt-delivery-fee').textContent = currentOrder.deliveryFee.toFixed(2);
     document.getElementById('receipt-total').textContent = total.toFixed(2);
     document.getElementById('receipt-payment-method').textContent = selectedPayment;
     document.getElementById('receipt-payment-status').textContent = paymentStatusText;
+
+    if (selectedOrderTypeValue === 'delivery' && currentOrder.deliveryFee > 0) {
+        document.getElementById('receipt-subtotal-line').style.display = 'block';
+        document.getElementById('receipt-delivery-fee-line').style.display = 'block';
+        document.getElementById('receipt-delivery-fee').textContent = currentOrder.deliveryFee.toFixed(2);
+    } else {
+        document.getElementById('receipt-subtotal-line').style.display = 'none';
+        document.getElementById('receipt-delivery-fee-line').style.display = 'none';
+    }
 
     if (paymentStatusValue === 'pago') {
         document.getElementById('receipt-amount-to-charge').textContent = '0.00';
