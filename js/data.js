@@ -23,6 +23,7 @@ const MISTURAS_OPCOES = {
     FEIJOADA: "Feijoada completa",
     COXA_SOBRECOXA: "Frango c/ batata assados",
     TILAPIA_PURE: "Filé de tilápia em pedaços c/ purê de batata",
+    COSTELINHA_PORCA: "Costelinha de porco acebolada",
 };
 
 const MISTURAS = Object.values(MISTURAS_OPCOES);
@@ -32,5 +33,6 @@ const REGRAS_EXCECAO_ACOMPANHAMENTO = {
     [MISTURAS_OPCOES.CARNE_DE_PANELA]: "Não acompanha batata frita.",
     [MISTURAS_OPCOES.COXA_SOBRECOXA]: "Não acompanha batata frita.",
     [MISTURAS_OPCOES.PARMEGIANA_FRANGO]: "Não acompanha ovo frito.",
+    [MISTURAS_OPCOES.COSTELINHA_PORCA]: "Não acompanha batata frita.",
     [MISTURAS_OPCOES.TILAPIA_PURE]: "Não acompanha batata frita e ovo",
 };
