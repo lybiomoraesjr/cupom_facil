@@ -30,7 +30,7 @@
                 width: 80mm;
                 font-size: 10pt;
             }
-            .receipt-header, .receipt-footer {
+            .receipt-header, .receipt-footer, .receipt-divider {
                 text-align: center;
             }
             .receipt-header h2 {
@@ -270,16 +270,16 @@
             <p>CNPJ: 65.172.987/0001-77</p>
             <p>R. Cedro, 1545 - Lavapés, Camanducaia - MG, 37650-000</p>
             <p>Telefone: (35) 9 1020-8036</p>
-            <p>--------------------------------</p>
+            <p class="receipt-divider">--------------------------------</p>
             <p>Data: <span id="receipt-date"></span></p>
-            <p>--------------------------------</p>
+            <p class="receipt-divider">--------------------------------</p>
         </div>
         <div class="receipt-items">
             <h3>Itens do Pedido</h3>
             <table id="receipt-items-table">
                 <!-- Itens para impressão -->
             </table>
-            <p>--------------------------------</p>
+            <p class="receipt-divider">--------------------------------</p>
         </div>
         <div class="receipt-total">
             <p id="receipt-subtotal-line">Subtotal: R$ <span id="receipt-subtotal"></span></p>
@@ -291,7 +291,7 @@
             <h3 class="font-bold">Valor a Cobrar: R$ <span id="receipt-amount-to-charge"></span></h3>
         </div>
         <div class="receipt-client">
-            <p>--------------------------------</p>
+            <p class="receipt-divider">--------------------------------</p>
             <h3>Dados do Cliente</h3>
             <p>Nome: <span id="receipt-client-name"></span></p>
             <p id="receipt-client-company-line" style="display: none;">Empresa: <span id="receipt-client-company-name"></span></p>
@@ -305,7 +305,7 @@
             <p>Modalidade: <span id="receipt-order-type"></span></p>
         </div>
         <div class="receipt-footer">
-            <p>--------------------------------</p>
+            <p class="receipt-divider">--------------------------------</p>
             <img src="assets/logo.png" alt="Logo" class="receipt-logo">
             <p style="font-weight: bold; font-size: 8pt; margin-top: 2mm;">--- ESTE NÃO É UM CUPOM FISCAL ---</p>
         </div>
