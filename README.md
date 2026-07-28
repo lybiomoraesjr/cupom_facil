@@ -14,7 +14,7 @@ O projeto destina-se ao lançamento ágil de pedidos no caixa e emissão automá
   - **Mesa / Local**: Suporte a campo **Número da Mesa** (ex: *Mesa 05*), opções exclusivas de prato (*Prato Feito* e *Comercial*) e caixa opcional para identificação do cliente.
 
 - **Lançamento de Marmitex**:
-  - Seleção por tamanho: **P** (R$ 25,00), **M** (R$ 29,00) e **G** (R$ 34,00).
+  - Seleção por tamanho: **P** (R$ 22,00), **M** (R$ 25,00) e **G** (R$ 30,00).
   - Cardápio fixo de misturas.
   - Inclusão automática dos acompanhamentos padrão e tratamento inteligente de exceções (ex: *Feijoada*, *Filé à Parmegiana*, etc.).
   - Campo para observações individuais por item (ex: *"Sem cebola"*, *"Com talheres"*).

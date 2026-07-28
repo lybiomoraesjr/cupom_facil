@@ -21,7 +21,7 @@ const MISTURAS_OPCOES = {
     TILAPIA_PEDACOS: "Filé de tilápia em pedaços",
     PARMEGIANA_FRANGO: "Filé de frango à parmegiana",
     FEIJOADA: "Feijoada completa",
-    COXA_SOBRECOXA: "Coxa e sobrecoxa assadas c/ batata",
+    COXA_SOBRECOXA: "Frango c/ batata assados",
     TILAPIA_PURE: "Filé de tilápia em pedaços c/ purê de batata",
 };
 
