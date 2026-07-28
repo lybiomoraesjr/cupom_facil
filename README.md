@@ -1,6 +1,6 @@
 # 🍽️ Cupom Fácil — Restaurante Doce Lar
 
-**Cupom Fácil** é um sistema leve, moderno e 100% *Client-Side* (rodando inteiramente no navegador, sem necessidade de servidor ou banco de dados) desenvolvido especialmente para o **Restaurante Doce Lar** (Camanducaia).
+**Cupom Fácil** é um sistema leve, moderno e 100% *Client-Side* (rodando inteiramente no navegador, sem necessidade de servidor ou banco de dados) desenvolvido especialmente para o **Restaurante Doce Lar** (Camanducaia - MG).
 
 O projeto destina-se ao lançamento ágil de pedidos no caixa e emissão automática de comandas formatadas para impressoras térmicas de **80mm (POS-80)**.
 
@@ -10,8 +10,8 @@ O projeto destina-se ao lançamento ágil de pedidos no caixa e emissão automá
 
 - **Modalidades de Pedido**:
   - **Delivery**: Taxa de entrega automática (com ajuste manual) e validação de campos obrigatórios de endereço (Nome, Rua, Bairro, Número, etc.).
-  - **Retirada / Balcão**: Para clientes que buscam no balcão (sem taxa de entrega).
-  - **Mesa / Local**: Para consumo no restaurante, com opções exclusivas de *Prato Feito* e *Comercial*.
+  - **Retirada / Balcão**: Oculta taxa de entrega e endereço de entrega.
+  - **Mesa / Local**: Suporte a campo **Número da Mesa** (ex: *Mesa 05*), opções exclusivas de prato (*Prato Feito* e *Comercial*) e caixa opcional para identificação do cliente.
 
 - **Lançamento de Marmitex**:
   - Seleção por tamanho: **P** (R$ 25,00), **M** (R$ 29,00) e **G** (R$ 34,00).
@@ -22,20 +22,23 @@ O projeto destina-se ao lançamento ágil de pedidos no caixa e emissão automá
 - **Produtos Personalizados**:
   - Adição de bebidas ou acompanhamentos avulsos com cálculo automático do **Valor Total** (`Quantidade × Preço Unitário`) em tempo real.
 
-- **Dados para Reembolso Corporativo (CNPJ)**:
-  - Opção para inclusão de **Razão Social / Nome da Empresa** e **CNPJ da Empresa** (com máscara automática `00.000.000/0000-00`).
-  - Os dados da empresa são exibidos no cupom de impressão apenas quando a opção estiver ativada e os campos preenchidos.
+- **Dados para Reembolso Corporativo & Autopreenchimento de CNPJ**:
+  - Inclusão opcional de **CNPJ da Empresa** e **Razão Social / Nome da Empresa** para clientes que precisam de comprovante corporativo.
+  - **Consulta Automática via BrasilAPI**: Ao digitar os 14 dígitos do CNPJ, o sistema busca e preenche automaticamente a Razão Social da empresa.
+  - Os dados da empresa são exibidos no cupom impresso apenas quando ativados e preenchidos.
 
-- **Pagamento e Totais**:
-  - Seleção de forma de pagamento (Dinheiro com troco, Cartão, PIX).
-  - Status do pagamento (*A Receber* vs *Já Pago*).
-  - Atualização automática de subtotal, taxa de entrega e valor a cobrar.
+- **Pagamento e Totais Inteligentes**:
+  - Seleção de forma de pagamento (Dinheiro com campo de troco, Cartão, PIX) e status (*A Receber* vs *Já Pago*), mantidos visíveis em todas as modalidades.
+  - Exibição de **Taxa de Entrega** e **Subtotal** apenas na modalidade *Delivery*. Nas modalidades *Balcão* e *Local*, a taxa e o subtotal são ocultados na tela e no cupom para uma visualização limpa do **Total**.
 
 - **Impressão Térmica de Comandas (80mm)**:
   - Layout otimizado via CSS `@media print` para papel térmico POS-80 (80mm).
-  - Ocultação dos controles do caixa durante a impressão.
-  - Logotipo em alta resolução preto e branco no rodapé.
+  - Cabeçalho oficial com nome, CNPJ e endereço completo do restaurante: `R. Cedro, 1545 - Lavapés, Camanducaia - MG, 37650-000`.
+  - Logotipo centralizado em alta resolução P&B no rodapé.
   - Aviso legal no rodapé: `--- ESTE NÃO É UM CUPOM FISCAL ---`.
+
+- **Gestão de Fluxo no Caixa**:
+  - Botão **Novo Pedido** com caixa de confirmação e limpeza automática de todos os campos do formulário para o próximo atendimento.
 
 ---
 
@@ -43,7 +46,8 @@ O projeto destina-se ao lançamento ágil de pedidos no caixa e emissão automá
 
 - **HTML5**: Estrutura semântica e formulários de cadastro.
 - **Tailwind CSS (via CDN)**: Estilização moderna, limpa e responsiva.
-- **JavaScript (ES6+)**: Lógica da aplicação, manipulação do DOM, cálculos em tempo real e preparação de impressão nativa (`window.print()`).
+- **JavaScript (ES6+)**: Lógica da aplicação, manipulação do DOM, requisições de API (`fetch`), cálculos em tempo real e preparação de impressão nativa (`window.print()`).
+- **BrasilAPI**: Integração pública e gratuita para consulta de CNPJ.
 
 ---
 
@@ -54,7 +58,7 @@ cupom_facil/
 ├── index.html       # Interface do caixa e layout do cupom térmico
 ├── js/
 │   ├── data.js      # Cardápio, tabela de preços e regras de acompanhamento
-│   └── app.js       # Gerenciamento do carrinho, totais, validações e eventos
+│   └── app.js       # Gerenciamento do carrinho, totais, validações, consulta CNPJ e eventos
 ├── assets/
 │   └── logo.png     # Logotipo oficial em P&B para impressão
 └── README.md        # Documentação do projeto
@@ -73,4 +77,4 @@ Por ser uma aplicação 100% estática (*Client-Side*):
 
 ## 🏢 Sobre
 
-Desenvolvido para atender o lançamento de pedidos e gestão de caixa do **Restaurante Doce Lar — Camanducaia**.
+Desenvolvido para atender o lançamento de pedidos e gestão de caixa do **Restaurante Doce Lar — Camanducaia/MG**.

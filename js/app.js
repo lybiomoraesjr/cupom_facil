@@ -391,8 +391,8 @@ function formatCNPJ(input) {
     }
 }
 
-function finalizeOrder() {
-    const confirmation = window.confirm("Tem certeza que deseja cancelar o pedido? Isso vai apagar todo o conteúdo.");
+function newOrder() {
+    const confirmation = window.confirm("Deseja iniciar um Novo Pedido? Todos os campos e itens do pedido atual serão limpos.");
     if (!confirmation) {
         return;
     }
@@ -415,7 +415,12 @@ function finalizeOrder() {
     toggleCompanyFields();
     clearCustomItemInputs();
     clearItemInputs();
-    alert("Pedido cancelado. Pronto para o próximo!");
+    alert("Formulário limpo com sucesso. Pronto para o próximo pedido!");
+}
+
+// Alias de compatibilidade
+function finalizeOrder() {
+    newOrder();
 }
 
 function prepareReceipt() {
