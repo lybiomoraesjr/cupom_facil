@@ -370,6 +370,21 @@ async function searchCNPJ(cnpj) {
     }
 }
 
+function formatPhone(input) {
+    let raw = input.value.replace(/\D/g, '');
+    if (raw.length > 11) raw = raw.slice(0, 11);
+
+    let value = raw;
+    if (raw.length > 10) {
+        value = raw.replace(/^(\d{2})(\d{5})(\d{4})$/, '($1) $2-$3');
+    } else if (raw.length > 6) {
+        value = raw.replace(/^(\d{2})(\d{4})(\d{0,4})$/, '($1) $2-$3');
+    } else if (raw.length > 2) {
+        value = raw.replace(/^(\d{2})(\d{0,5})$/, '($1) $2');
+    }
+    input.value = value;
+}
+
 function formatCNPJ(input) {
     let raw = input.value.replace(/\D/g, '');
     let value = raw;
