@@ -166,17 +166,17 @@
                 <div class="mb-4">
                     <label for="payment-method" class="block mb-1 font-medium">Forma de Pagamento:</label>
                     <div class="flex">
-                        <select id="payment-method" class="w-full p-2 border border-gray-300 rounded-l-md">
+                        <select id="payment-method" onchange="togglePaymentChangeField()" class="w-full p-2 border border-gray-300 rounded-l-md">
                             <option value="dinheiro">Dinheiro</option>
                             <option value="cartao">Cartão</option>
                             <option value="pix">PIX</option>
                         </select>
-                        <input type="text" id="payment-change" placeholder="Troco para quanto?" style="display: none;" class="w-full p-2 border border-gray-300 rounded-r-md">
+                        <input type="text" id="payment-change" placeholder="Troco para quanto?" class="w-full p-2 border border-gray-300 rounded-r-md">
                     </div>
                 </div>
                 <div class="mb-4">
                     <label for="payment-status" class="block mb-1 font-medium">Status do Pagamento:</label>
-                    <select id="payment-status" class="w-full p-2 border border-gray-300 rounded-md">
+                    <select id="payment-status" onchange="togglePaymentChangeField()" class="w-full p-2 border border-gray-300 rounded-md">
                         <option value="receber">A Receber</option>
                         <option value="pago">Já Pago</option>
                     </select>

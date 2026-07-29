@@ -2,12 +2,26 @@ document.addEventListener('DOMContentLoaded', () => {
     updateMisturas();
     setupEventListeners();
     toggleOrderTypeFields(); // Call on load to set initial state
+    togglePaymentChangeField(); // Set initial state for payment change field
 });
 
 let currentOrder = {
     items: [],
     deliveryFee: 0,
 };
+
+function togglePaymentChangeField() {
+    const paymentMethod = document.getElementById('payment-method').value;
+    const paymentStatus = document.getElementById('payment-status').value;
+    const paymentChangeInput = document.getElementById('payment-change');
+    
+    if (paymentMethod === 'dinheiro' && paymentStatus === 'receber') {
+        paymentChangeInput.style.display = 'inline-block';
+    } else {
+        paymentChangeInput.style.display = 'none';
+        paymentChangeInput.value = '';
+    }
+}
 
 function updateMisturas() {
     const misturaSelect = document.getElementById('item-mixture');
@@ -31,9 +45,8 @@ function setupEventListeners() {
         document.getElementById('item-mixture').disabled = !size;
     });
 
-    document.getElementById('payment-method').addEventListener('change', (e) => {
-        document.getElementById('payment-change').style.display = e.target.value === 'dinheiro' ? 'inline-block' : 'none';
-    });
+    document.getElementById('payment-method').addEventListener('change', togglePaymentChangeField);
+    document.getElementById('payment-status').addEventListener('change', togglePaymentChangeField);
 
     // Add event listeners to remove red border and hide error message on input
     const requiredFields = ['client-name', 'client-street', 'client-neighborhood'];
@@ -529,8 +542,9 @@ function newOrder() {
     document.getElementById('client-neighborhood').value = '';
     document.getElementById('client-complement').value = '';
     document.getElementById('client-reference').value = '';
-    document.getElementById('client-phone').value = '';
+    document.getElementById('payment-method').value = 'dinheiro';
     document.getElementById('payment-change').value = '';
+    togglePaymentChangeField();
     document.getElementById('toggle-local-client').checked = false;
     document.getElementById('toggle-company-info').checked = false;
     toggleCompanyFields();
