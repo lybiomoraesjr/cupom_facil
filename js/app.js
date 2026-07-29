@@ -425,8 +425,16 @@ function sendWhatsApp() {
     }
     msg += `• *TOTAL:* R$ ${total.toFixed(2)}\n`;
     msg += `• *Pagamento:* ${selectedPayment}`;
-    if (selectedPayment === 'Dinheiro' && paymentChange) {
-        msg += ` (Troco para R$ ${parseFloat(paymentChange).toFixed(2)})`;
+    if (selectedPayment === 'Dinheiro' && paymentChange && paymentStatusSelect.value === 'receber') {
+        const changeForVal = parseFloat(paymentChange);
+        if (!isNaN(changeForVal)) {
+            msg += ` (Troco para R$ ${changeForVal.toFixed(2)}`;
+            if (changeForVal > total) {
+                const changeToReturn = changeForVal - total;
+                msg += ` - Devolver: R$ ${changeToReturn.toFixed(2)}`;
+            }
+            msg += `)`;
+        }
     }
     msg += `\n`;
     msg += `• *Status:* ${paymentStatusText}`;
@@ -679,9 +687,19 @@ function prepareReceipt() {
         document.getElementById('receipt-amount-to-charge').textContent = total.toFixed(2);
     }
     
-    if (selectedPayment === 'Dinheiro' && paymentChange) {
-        document.getElementById('receipt-payment-change-line').style.display = 'block';
-        document.getElementById('receipt-payment-change').textContent = parseFloat(paymentChange).toFixed(2);
+    if (selectedPayment === 'Dinheiro' && paymentChange && paymentStatusValue === 'receber') {
+        const changeForVal = parseFloat(paymentChange);
+        if (!isNaN(changeForVal)) {
+            let changeText = `${changeForVal.toFixed(2)}`;
+            if (changeForVal > total) {
+                const changeToReturn = changeForVal - total;
+                changeText += ` (Devolver: R$ ${changeToReturn.toFixed(2)})`;
+            }
+            document.getElementById('receipt-payment-change-line').style.display = 'block';
+            document.getElementById('receipt-payment-change').textContent = changeText;
+        } else {
+            document.getElementById('receipt-payment-change-line').style.display = 'none';
+        }
     } else {
         document.getElementById('receipt-payment-change-line').style.display = 'none';
     }
