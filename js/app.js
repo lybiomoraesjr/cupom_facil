@@ -364,16 +364,16 @@ function sendWhatsApp() {
     const paymentStatusText = paymentStatusSelect.options[paymentStatusSelect.selectedIndex].text;
 
     let msg = `*RESTAURANTE DOCE LAR*\n`;
-    msg += `_Comanda de Pedido_\n\n`;
-    msg += `📅 *Data:* ${dateStr}\n`;
-    msg += `📋 *Modalidade:* ${selectedOrderType}`;
+    msg += `*Resumo do Seu Pedido*\n\n`;
+    msg += `*Data:* ${dateStr}\n`;
+    msg += `*Modalidade:* ${selectedOrderType}`;
     if (orderTypeSelect.value === 'local' && tableNumber) {
         msg += ` (${tableNumber})`;
     }
     msg += `\n\n`;
 
     if (clientName || clientPhone || isCompanyChecked) {
-        msg += `👤 *DADOS DO CLIENTE*\n`;
+        msg += `*DADOS DO CLIENTE*\n`;
         if (clientName) msg += `• *Nome:* ${clientName}\n`;
         if (clientPhone) msg += `• *Celular:* ${clientPhone}\n`;
         if (isCompanyChecked && companyName) msg += `• *Empresa:* ${companyName}\n`;
@@ -388,7 +388,7 @@ function sendWhatsApp() {
         msg += `\n`;
     }
 
-    msg += `🍱 *ITENS DO PEDIDO:*\n`;
+    msg += `*ITENS DO PEDIDO:*\n`;
     currentOrder.items.forEach(item => {
         if (item.type === 'meal') {
             msg += `• *${item.qty}x ${item.description} - ${item.mixture}* (R$ ${item.price.toFixed(2)})\n`;
@@ -405,7 +405,7 @@ function sendWhatsApp() {
     });
     msg += `\n`;
 
-    msg += `💰 *RESUMO FINANCEIRO:*\n`;
+    msg += `*RESUMO FINANCEIRO:*\n`;
     if (orderTypeSelect.value === 'delivery' && currentOrder.deliveryFee > 0) {
         msg += `• *Subtotal:* R$ ${subtotal.toFixed(2)}\n`;
         msg += `• *Taxa de Entrega:* R$ ${currentOrder.deliveryFee.toFixed(2)}\n`;
@@ -416,9 +416,7 @@ function sendWhatsApp() {
         msg += ` (Troco para R$ ${parseFloat(paymentChange).toFixed(2)})`;
     }
     msg += `\n`;
-    msg += `• *Status:* ${paymentStatusText}\n\n`;
-
-    msg += `--- ESTE NÃO É UM CUPOM FISCAL ---`;
+    msg += `• *Status:* ${paymentStatusText}`;
 
     const targetPhone = "5535910208036";
     const encodedText = encodeURIComponent(msg);
