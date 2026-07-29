@@ -214,8 +214,8 @@ function renderOrderSummary() {
         let text;
         if (item.type === 'meal') {
             const cutleryBadge = item.cutlery === 'Com talheres'
-                ? `<span class="text-xs bg-green-100 text-green-800 px-1.5 py-0.5 rounded font-semibold ml-1">[Com talheres]</span>`
-                : `<span class="text-xs bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded font-medium ml-1">[Sem talheres]</span>`;
+                ? `<span class="text-xs bg-[#602c18]/10 text-[#602c18] border border-[#602c18]/30 px-2 py-0.5 rounded-md font-semibold ml-1.5">[Com talheres]</span>`
+                : `<span class="text-xs bg-gray-100 text-gray-600 border border-gray-200 px-2 py-0.5 rounded-md font-medium ml-1.5">[Sem talheres]</span>`;
             text = `${item.qty}x ${item.description} - ${item.mixture} ${cutleryBadge}`;
             if (item.observation) {
                 text += ` <span class="text-sm text-gray-500">(${item.observation})</span>`;
