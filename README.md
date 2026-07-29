@@ -37,8 +37,12 @@ O projeto destina-se ao lançamento ágil de pedidos no caixa e emissão automá
   - Logotipo centralizado em alta resolução P&B no rodapé.
   - Aviso legal no rodapé: `--- ESTE NÃO É UM CUPOM FISCAL ---`.
 
+- **Envio de Comanda via WhatsApp**:
+  - Botão dedicado **Enviar WhatsApp** posicionado ao lado de *Imprimir Comanda*.
+  - Formata uma mensagem completa com os dados do cliente, itens, acompanhamentos, talheres, totais e forma de pagamento, direcionando para o número do restaurante (`(35) 9 1020-8036`).
+
 - **Gestão de Fluxo no Caixa**:
-  - Botão **Novo Pedido** com caixa de confirmação e limpeza automática de todos os campos do formulário para o próximo atendimento.
+  - Botão **Novo Pedido** (posicionado em destaque na linha inferior) com caixa de confirmação e limpeza automática de todos os campos do formulário para o próximo atendimento.
 
 ---
 

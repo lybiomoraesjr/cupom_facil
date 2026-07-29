@@ -129,6 +129,9 @@ function addItem() {
     const mixture = document.getElementById('item-mixture').value;
     const observation = document.getElementById('item-observation').value;
 
+    const cutleryRadio = document.querySelector('input[name="item-cutlery"]:checked');
+    const cutlery = cutleryRadio ? cutleryRadio.value : 'Sem talheres';
+
     if (qty <= 0 || !size || !mixture) {
         alert('Por favor, preencha a quantidade, tipo/tamanho e a mistura.');
         return;
@@ -150,6 +153,7 @@ function addItem() {
         qty,
         description,
         mixture,
+        cutlery,
         price: qty * unitPrice,
         observation,
     };
@@ -196,7 +200,10 @@ function renderOrderSummary() {
         
         let text;
         if (item.type === 'meal') {
-            text = `${item.qty}x ${item.description} - ${item.mixture}`;
+            const cutleryBadge = item.cutlery === 'Com talheres'
+                ? `<span class="text-xs bg-green-100 text-green-800 px-1.5 py-0.5 rounded font-semibold ml-1">[Com talheres]</span>`
+                : `<span class="text-xs bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded font-medium ml-1">[Sem talheres]</span>`;
+            text = `${item.qty}x ${item.description} - ${item.mixture} ${cutleryBadge}`;
             if (item.observation) {
                 text += ` <span class="text-sm text-gray-500">(${item.observation})</span>`;
             }
@@ -224,6 +231,8 @@ function clearItemInputs() {
     document.getElementById('item-mixture').value = '';
     document.getElementById('item-observation').value = '';
     document.getElementById('item-mixture').disabled = true;
+    const defaultCutlery = document.querySelector('input[name="item-cutlery"][value="Sem talheres"]');
+    if (defaultCutlery) defaultCutlery.checked = true;
 }
 
 function updateCustomItemTotal() {
@@ -317,6 +326,105 @@ function printOnly() {
     }
     prepareReceipt();
     window.print();
+}
+
+function sendWhatsApp() {
+    if (currentOrder.items.length === 0) {
+        alert("Nenhum item no pedido para enviar por WhatsApp.");
+        return;
+    }
+    if (!validateDeliveryFields()) {
+        return;
+    }
+
+    const orderTypeSelect = document.getElementById('order-type');
+    const selectedOrderType = orderTypeSelect.options[orderTypeSelect.selectedIndex].text;
+    const dateStr = new Date().toLocaleString('pt-BR');
+
+    const clientName = document.getElementById('client-name').value.trim();
+    const clientPhone = document.getElementById('client-phone').value.trim();
+    const clientStreet = document.getElementById('client-street').value.trim();
+    const clientNumber = document.getElementById('client-number').value.trim();
+    const clientNeighborhood = document.getElementById('client-neighborhood').value.trim();
+    const clientComplement = document.getElementById('client-complement').value.trim();
+    const clientReference = document.getElementById('client-reference').value.trim();
+    const tableNumber = document.getElementById('table-number').value.trim();
+
+    const isCompanyChecked = document.getElementById('toggle-company-info').checked;
+    const companyName = document.getElementById('client-company-name').value.trim();
+    const companyCNPJ = document.getElementById('client-company-cnpj').value.trim();
+
+    const subtotal = currentOrder.items.reduce((sum, item) => sum + item.price, 0);
+    const total = subtotal + currentOrder.deliveryFee;
+
+    const paymentMethodSelect = document.getElementById('payment-method');
+    const selectedPayment = paymentMethodSelect.options[paymentMethodSelect.selectedIndex].text;
+    const paymentChange = document.getElementById('payment-change').value.trim();
+    const paymentStatusSelect = document.getElementById('payment-status');
+    const paymentStatusText = paymentStatusSelect.options[paymentStatusSelect.selectedIndex].text;
+
+    let msg = `*RESTAURANTE DOCE LAR*\n`;
+    msg += `_Comanda de Pedido_\n\n`;
+    msg += `📅 *Data:* ${dateStr}\n`;
+    msg += `📋 *Modalidade:* ${selectedOrderType}`;
+    if (orderTypeSelect.value === 'local' && tableNumber) {
+        msg += ` (${tableNumber})`;
+    }
+    msg += `\n\n`;
+
+    if (clientName || clientPhone || isCompanyChecked) {
+        msg += `👤 *DADOS DO CLIENTE*\n`;
+        if (clientName) msg += `• *Nome:* ${clientName}\n`;
+        if (clientPhone) msg += `• *Celular:* ${clientPhone}\n`;
+        if (isCompanyChecked && companyName) msg += `• *Empresa:* ${companyName}\n`;
+        if (isCompanyChecked && companyCNPJ) msg += `• *CNPJ Empresa:* ${companyCNPJ}\n`;
+
+        if (orderTypeSelect.value === 'delivery' && clientStreet) {
+            msg += `• *Endereço:* ${clientStreet}, ${clientNumber || 'S/N'}\n`;
+            if (clientNeighborhood) msg += `• *Bairro:* ${clientNeighborhood}\n`;
+            if (clientComplement) msg += `• *Comp:* ${clientComplement}\n`;
+            if (clientReference) msg += `• *Ref:* ${clientReference}\n`;
+        }
+        msg += `\n`;
+    }
+
+    msg += `🍱 *ITENS DO PEDIDO:*\n`;
+    currentOrder.items.forEach(item => {
+        if (item.type === 'meal') {
+            msg += `• *${item.qty}x ${item.description} - ${item.mixture}* (R$ ${item.price.toFixed(2)})\n`;
+            let accompaniments = REGRAS_EXCECAO_ACOMPANHAMENTO[item.mixture] || ACOMPANHAMENTOS_BASE;
+            msg += `   _${accompaniments}_\n`;
+            let cutleryObs = `[${item.cutlery || 'Sem talheres'}]`;
+            if (item.observation) {
+                cutleryObs += ` - Obs: ${item.observation}`;
+            }
+            msg += `   *${cutleryObs}*\n`;
+        } else {
+            msg += `• *${item.qty}x ${item.name}* (R$ ${item.price.toFixed(2)})\n`;
+        }
+    });
+    msg += `\n`;
+
+    msg += `💰 *RESUMO FINANCEIRO:*\n`;
+    if (orderTypeSelect.value === 'delivery' && currentOrder.deliveryFee > 0) {
+        msg += `• *Subtotal:* R$ ${subtotal.toFixed(2)}\n`;
+        msg += `• *Taxa de Entrega:* R$ ${currentOrder.deliveryFee.toFixed(2)}\n`;
+    }
+    msg += `• *TOTAL:* R$ ${total.toFixed(2)}\n`;
+    msg += `• *Pagamento:* ${selectedPayment}`;
+    if (selectedPayment === 'Dinheiro' && paymentChange) {
+        msg += ` (Troco para R$ ${parseFloat(paymentChange).toFixed(2)})`;
+    }
+    msg += `\n`;
+    msg += `• *Status:* ${paymentStatusText}\n\n`;
+
+    msg += `--- ESTE NÃO É UM CUPOM FISCAL ---`;
+
+    const targetPhone = "5535910208036";
+    const encodedText = encodeURIComponent(msg);
+    const whatsappUrl = `https://wa.me/${targetPhone}?text=${encodedText}`;
+
+    window.open(whatsappUrl, '_blank');
 }
 
 function toggleCompanyFields() {
@@ -510,11 +618,13 @@ function prepareReceipt() {
             trAccompaniments.innerHTML = `<td colspan="3" class="item-accompaniments">${accompaniments}</td>`;
             itemsTable.appendChild(trAccompaniments);
 
+            const trObs = document.createElement('tr');
+            let obsText = `[${item.cutlery || 'Sem talheres'}]`;
             if (item.observation) {
-                const trObs = document.createElement('tr');
-                trObs.innerHTML = `<td colspan="3" class="item-obs"><strong>Obs: ${item.observation}</strong></td>`;
-                itemsTable.appendChild(trObs);
+                obsText += ` - Obs: ${item.observation}`;
             }
+            trObs.innerHTML = `<td colspan="3" class="item-obs"><strong>${obsText}</strong></td>`;
+            itemsTable.appendChild(trObs);
         } else { // custom item
             const tr = document.createElement('tr');
             tr.innerHTML = `
