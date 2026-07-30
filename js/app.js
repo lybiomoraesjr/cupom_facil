@@ -97,6 +97,9 @@ function toggleOrderTypeFields() {
 
     updateItemOptions(orderType);
 
+    const cutleryContainer = document.getElementById('cutlery-container');
+    const obsContainer = document.getElementById('observation-container');
+
     if (orderType === 'delivery') {
         tableContainer.style.display = 'none';
         document.getElementById('table-number').value = '';
@@ -106,14 +109,29 @@ function toggleOrderTypeFields() {
         deliveryFeeFieldset.style.display = 'block';
         currentOrder.deliveryFee = 5.00;
         document.getElementById('delivery-fee').value = '5.00';
+        if (cutleryContainer) cutleryContainer.style.display = 'block';
+        if (obsContainer) {
+            obsContainer.classList.remove('md:col-span-6');
+            obsContainer.classList.add('md:col-span-4');
+        }
     } else if (orderType === 'balcao') {
         tableContainer.style.display = 'none';
         document.getElementById('table-number').value = '';
         localToggleContainer.style.display = 'none';
         clientInfoFields.style.display = 'block';
+        if (cutleryContainer) cutleryContainer.style.display = 'block';
+        if (obsContainer) {
+            obsContainer.classList.remove('md:col-span-6');
+            obsContainer.classList.add('md:col-span-4');
+        }
     } else if (orderType === 'local') {
         tableContainer.style.display = 'block';
         localToggleContainer.style.display = 'block';
+        if (cutleryContainer) cutleryContainer.style.display = 'none';
+        if (obsContainer) {
+            obsContainer.classList.remove('md:col-span-4');
+            obsContainer.classList.add('md:col-span-6');
+        }
         toggleLocalClientFields();
     }
     
@@ -143,7 +161,7 @@ function addItem() {
     const observation = document.getElementById('item-observation').value;
 
     const cutleryRadio = document.querySelector('input[name="item-cutlery"]:checked');
-    const cutlery = cutleryRadio ? cutleryRadio.value : 'Sem talheres';
+    const cutlery = orderType === 'local' ? null : (cutleryRadio ? cutleryRadio.value : 'Sem talheres');
 
     if (qty <= 0 || !size || !mixture) {
         alert('Por favor, preencha a quantidade, tipo/tamanho e a mistura.');
@@ -213,9 +231,12 @@ function renderOrderSummary() {
         
         let text;
         if (item.type === 'meal') {
-            const cutleryBadge = item.cutlery === 'Com talheres'
-                ? `<span class="text-xs bg-[#602c18]/10 text-[#602c18] border border-[#602c18]/30 px-2 py-0.5 rounded-md font-semibold ml-1.5">[Com talheres]</span>`
-                : `<span class="text-xs bg-gray-100 text-gray-600 border border-gray-200 px-2 py-0.5 rounded-md font-medium ml-1.5">[Sem talheres]</span>`;
+            let cutleryBadge = '';
+            if (item.cutlery) {
+                cutleryBadge = item.cutlery === 'Com talheres'
+                    ? `<span class="text-xs bg-[#602c18]/10 text-[#602c18] border border-[#602c18]/30 px-2 py-0.5 rounded-md font-semibold ml-1.5">[Com talheres]</span>`
+                    : `<span class="text-xs bg-gray-100 text-gray-600 border border-gray-200 px-2 py-0.5 rounded-md font-medium ml-1.5">[Sem talheres]</span>`;
+            }
             text = `${item.qty}x ${item.description} - ${item.mixture} ${cutleryBadge}`;
             if (item.observation) {
                 text += ` <span class="text-sm text-gray-500">(${item.observation})</span>`;
@@ -407,11 +428,17 @@ function sendWhatsApp() {
             msg += `• *${item.qty}x ${item.description} - ${item.mixture}* (R$ ${item.price.toFixed(2)})\n`;
             let accompaniments = REGRAS_EXCECAO_ACOMPANHAMENTO[item.mixture] || ACOMPANHAMENTOS_BASE;
             msg += `   _${accompaniments}_\n`;
-            let cutleryObs = `[${item.cutlery || 'Sem talheres'}]`;
-            if (item.observation) {
-                cutleryObs += ` - Obs: ${item.observation}`;
+            let cutleryObs = '';
+            if (item.cutlery) {
+                cutleryObs += `[${item.cutlery}]`;
             }
-            msg += `   *${cutleryObs}*\n`;
+            if (item.observation) {
+                if (cutleryObs) cutleryObs += ' - ';
+                cutleryObs += `Obs: ${item.observation}`;
+            }
+            if (cutleryObs) {
+                msg += `   *${cutleryObs}*\n`;
+            }
         } else {
             msg += `• *${item.qty}x ${item.name}* (R$ ${item.price.toFixed(2)})\n`;
         }
@@ -638,13 +665,19 @@ function prepareReceipt() {
             trAccompaniments.innerHTML = `<td colspan="3" class="item-accompaniments">${accompaniments}</td>`;
             itemsTable.appendChild(trAccompaniments);
 
-            const trObs = document.createElement('tr');
-            let obsText = `[${item.cutlery || 'Sem talheres'}]`;
-            if (item.observation) {
-                obsText += ` - Obs: ${item.observation}`;
+            let obsText = '';
+            if (item.cutlery) {
+                obsText += `[${item.cutlery}]`;
             }
-            trObs.innerHTML = `<td colspan="3" class="item-obs"><strong>${obsText}</strong></td>`;
-            itemsTable.appendChild(trObs);
+            if (item.observation) {
+                if (obsText) obsText += ' - ';
+                obsText += `Obs: ${item.observation}`;
+            }
+            if (obsText) {
+                const trObs = document.createElement('tr');
+                trObs.innerHTML = `<td colspan="3" class="item-obs"><strong>${obsText}</strong></td>`;
+                itemsTable.appendChild(trObs);
+            }
         } else { // custom item
             const tr = document.createElement('tr');
             tr.innerHTML = `
