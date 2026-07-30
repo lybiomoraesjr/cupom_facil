@@ -572,6 +572,7 @@ function newOrder() {
     updateTotal();
     document.getElementById('table-number').value = '';
     document.getElementById('client-name').value = '';
+    document.getElementById('client-phone').value = '';
     document.getElementById('client-street').value = '';
     document.getElementById('client-number').value = '';
     document.getElementById('client-neighborhood').value = '';
